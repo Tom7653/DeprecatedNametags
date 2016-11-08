@@ -14,9 +14,20 @@
  */
 package com.github.acquized.nametags;
 
+
+import com.github.acquized.nametags.config.Config;
+import com.github.acquized.nametags.utils.Metrics;
+
+import net.cubespace.Yamler.Config.InvalidConfigurationException;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
 
 import lombok.Getter;
 
@@ -28,17 +39,72 @@ public class Nametags extends JavaPlugin {
     public static String prefix = GREEN + "> " + GRAY;
     @Getter private static Nametags instance;
     @Getter private Logger log = LoggerFactory.getLogger(Nametags.class);
+    @Getter private Config config;
 
     @Override
     public void onEnable() {
         instance = this;
+        if(!areDependenciesInstalled()) {
+            log.error("Could not load ProtocolLib or Vault. Please install both plugins and restart the server.");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+        loadConfigs();
+        prefix = ChatColor.translateAlternateColorCodes('&', config.prefix);
+        // packet setup (protocollib)
+        // vault hooking
+        // api setup
+        registerListeners(Bukkit.getPluginManager());
+        registerCommands();
         log.info("Nametags v{} has been enabled.", getDescription().getVersion());
+        try {
+            Metrics metrics = new Metrics(this);
+            addCustomGraphs(metrics);
+        } catch (Exception ex) {
+            log.warn("Could not submit data to bStats.org", ex);
+        }
+        if(config.updater)
+            // start updating
+        return;
     }
 
     @Override
     public void onDisable() {
         instance = null;
         log.info("Nametags v{} has been disabled.", getDescription().getVersion());
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    private void loadConfigs() {
+        // config.yml
+        try {
+            File file = new File(getDataFolder(), "config.yml");
+            config = new Config(file);
+            config.init();
+            if (!config.version.equalsIgnoreCase(getDescription().getVersion())) {
+                file.delete();
+                config.init();
+            }
+        } catch (InvalidConfigurationException ex) {
+            log.error("Could not load config.yml file - Please check for errors", ex);
+        }
+
+    }
+
+    private boolean areDependenciesInstalled() {
+        return (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) && (Bukkit.getPluginManager().isPluginEnabled("Vault"));
+    }
+
+    private void registerListeners(PluginManager pm) {
+
+    }
+
+    private void registerCommands() {
+
+    }
+
+    private void addCustomGraphs(Metrics metrics) {
+
     }
 
 }
