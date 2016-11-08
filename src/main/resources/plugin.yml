@@ -1,0 +1,14 @@
+#################################################
+#                    WARNING                    #
+# Here ends the Support for this Plugin. Making #
+# Changes to the Plugin's Root File is under no #
+# circumstances allowed. Changing the wrong Va- #
+# lues in this File causes unwanted bad effects #
+#                                               #
+# >>       PLEASE PROCEED WITH CAUTION       << #
+#################################################
+
+name: ${project.name}
+version: ${project.version}
+author: ${author}
+main: ${main}
