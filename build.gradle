@@ -28,6 +28,10 @@ repositories {
         url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
     }
     maven {
+        name 'oss-sonatype'
+        url 'https://oss.sonatype.org/content/repositories/snapshots'
+    }
+    maven {
         name 'vault-repo'
         url 'http://nexus.hc.to/content/repositories/pub_releases'
     }
