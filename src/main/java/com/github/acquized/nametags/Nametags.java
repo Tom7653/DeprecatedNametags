@@ -16,6 +16,7 @@ package com.github.acquized.nametags;
 
 
 import com.github.acquized.nametags.config.Config;
+import com.github.acquized.nametags.update.Updater;
 import com.github.acquized.nametags.utils.Metrics;
 
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
@@ -64,8 +65,7 @@ public class Nametags extends JavaPlugin {
             log.warn("Could not submit data to bStats.org", ex);
         }
         if(conf.updater)
-            // start updating
-        return;
+            Updater.start();
     }
 
     @Override
