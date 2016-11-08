@@ -39,7 +39,7 @@ public class Nametags extends JavaPlugin {
     public static String prefix = GREEN + "> " + GRAY;
     @Getter private static Nametags instance;
     @Getter private Logger log = LoggerFactory.getLogger(Nametags.class);
-    @Getter private Config config;
+    @Getter private Config conf;
 
     @Override
     public void onEnable() {
@@ -50,7 +50,7 @@ public class Nametags extends JavaPlugin {
             return;
         }
         loadConfigs();
-        prefix = ChatColor.translateAlternateColorCodes('&', config.prefix);
+        prefix = ChatColor.translateAlternateColorCodes('&', conf.prefix);
         // packet setup (protocollib)
         // vault hooking
         // api setup
@@ -63,7 +63,7 @@ public class Nametags extends JavaPlugin {
         } catch (Exception ex) {
             log.warn("Could not submit data to bStats.org", ex);
         }
-        if(config.updater)
+        if(conf.updater)
             // start updating
         return;
     }
@@ -79,11 +79,11 @@ public class Nametags extends JavaPlugin {
         // config.yml
         try {
             File file = new File(getDataFolder(), "config.yml");
-            config = new Config(file);
-            config.init();
-            if (!config.version.equalsIgnoreCase(getDescription().getVersion())) {
+            conf = new Config(file);
+            conf.init();
+            if (!conf.version.equalsIgnoreCase(getDescription().getVersion())) {
                 file.delete();
-                config.init();
+                conf.init();
             }
         } catch (InvalidConfigurationException ex) {
             log.error("Could not load config.yml file - Please check for errors", ex);
