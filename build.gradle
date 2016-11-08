@@ -56,7 +56,6 @@ dependencies {
     compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.21'
     compile group: 'com.eclipsesource.minimal-json', name: 'minimal-json', version: '0.9.4'
     compile group: 'net.cubespace.yamler', name: 'Yamler-Bukkit', version: '2.4.0'
-    compile group: 'org.mcstats.bungee', name: 'metrics', version: 'R8-SNAPSHOT'
 
     // Test
     testCompile group: 'junit', name: 'junit', version: '4.11'
@@ -78,13 +77,11 @@ shadowJar {
     relocate 'com.zaxxer.hikari', 'com.github.acquized.nametags.libs.hikaricp'
     relocate 'net.cubespace.Yamler', 'com.github.acquized.nametags.libs.yamler'
     relocate 'org.slf4j', 'com.github.acquized.nametags.libs.slf4j'
-    relocate 'org.mcstats', 'com.github.acquized.nametags.utils'
 
     dependencies {
         include(dependency('com.eclipsesource.minimal-json:minimal-json:0.9.4'))
         include(dependency('net.cubespace.yamler:Yamler-Bukkit:2.4.0'))
         include(dependency('org.slf4j::1.7.21'))
-        include(dependency('org.mcstats.bungee:metrics:R8-SNAPSHOT'))
     }
 }
 
