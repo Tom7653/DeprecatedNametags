@@ -40,6 +40,14 @@ repositories {
         url 'http://repo.dmulloy2.net/content/groups/public/'
     }
     maven {
+        name 'placeholderapi-repo'
+        url 'http://repo.extendedclip.com/content/repositories/placeholderapi/'
+    }
+    /*maven {
+        name 'mvdw-repo'
+        url 'http://repo.mvdw-software.be/content/groups/public/'
+    }*/
+    maven {
         name 'mcstats-repo'
         url 'http://repo.mcstats.org/content/repositories/public'
     }
@@ -55,6 +63,10 @@ dependencies {
     compile group: 'org.projectlombok', name: 'lombok', version: '1.16.10'
     compile group: 'net.milkbowl.vault', name: 'VaultAPI', version: '1.6'
     compile group: 'com.comphenix.protocol', name: 'ProtocolLib', version: '3.6.5'
+
+    // Placeholder Plugins (also provided at runtime - OPTIONAL)
+    compile group: 'me.clip', name: 'placeholderapi', version: '2.5.1'
+    /*compile group: 'be.maximvdw', name: 'MVdWPlaceholderAPI', version: '1.0.1-SNAPSHOT'*/
 
     // Compiled using ShadowJar
     compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.21'

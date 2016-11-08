@@ -14,8 +14,10 @@
  */
 package com.github.acquized.nametags;
 
-
 import com.github.acquized.nametags.config.Config;
+import com.github.acquized.nametags.hook.Hook;
+import com.github.acquized.nametags.hook.impl.DefaultHook;
+import com.github.acquized.nametags.hook.impl.PlaceholderAPIHook;
 import com.github.acquized.nametags.update.Updater;
 import com.github.acquized.nametags.utils.Metrics;
 
@@ -41,6 +43,7 @@ public class Nametags extends JavaPlugin {
     @Getter private static Nametags instance;
     @Getter private Logger log = LoggerFactory.getLogger(Nametags.class);
     @Getter private Config conf;
+    @Getter private Hook hook;
 
     @Override
     public void onEnable() {
@@ -53,6 +56,10 @@ public class Nametags extends JavaPlugin {
         loadConfigs();
         prefix = ChatColor.translateAlternateColorCodes('&', conf.prefix);
         // packet setup (protocollib)
+        if(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI"))
+            hook = new PlaceholderAPIHook();
+        else
+            hook = new DefaultHook();
         // vault hooking
         // api setup
         registerListeners(Bukkit.getPluginManager());
