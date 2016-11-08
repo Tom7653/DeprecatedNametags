@@ -1,0 +1,119 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'io.franzbecker.gradle-lombok'
+
+println """
+***************************************
+ You are building Nametags!
+
+ If you encounter trouble:
+ 1) Read the wiki if you haven't yet
+ 2) Try running 'build' in a separate Gradle run
+ 3) Use gradlew and not gradle
+ 4) If you still need help, ask per Spigot PM. Do not open a Issue
+
+***************************************
+"""
+
+group 'com.github.acquized'
+version '2.0.0-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven {
+        name 'spigot-repo'
+        url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+    }
+    maven {
+        name 'vault-repo'
+        url 'http://nexus.hc.to/content/repositories/pub_releases'
+    }
+    maven {
+        name 'dmulloy2-repo'
+        url 'http://repo.dmulloy2.net/content/groups/public/'
+    }
+    maven {
+        name 'mcstats-repo'
+        url 'http://repo.mcstats.org/content/repositories/public'
+    }
+    maven {
+        name 'jitpack-central'
+        url 'https://jitpack.io'
+    }
+}
+
+dependencies {
+    // Provided at runtime
+    compile group: 'org.spigotmc', name: 'spigot-api', version: '1.10.2-R0.1-SNAPSHOT'
+    compile group: 'org.projectlombok', name: 'lombok', version: '1.16.10'
+    compile group: 'net.milkbowl.vault', name: 'VaultAPI', version: '1.6'
+    compile group: 'com.comphenix.protocol', name: 'ProtocolLib', version: '3.6.5'
+
+    // Compiled using ShadowJar
+    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.21'
+    compile group: 'com.eclipsesource.minimal-json', name: 'minimal-json', version: '0.9.4'
+    compile group: 'net.cubespace.yamler', name: 'Yamler-Bukkit', version: '2.4.0'
+    compile group: 'org.mcstats.bungee', name: 'metrics', version: 'R8-SNAPSHOT'
+
+    // Test
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+buildscript {
+    repositories {
+        jcenter()
+        maven { url 'https://plugins.gradle.org/m2/' }
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
+        classpath 'io.franzbecker:gradle-lombok:1.6'
+    }
+}
+
+shadowJar {
+    relocate 'com.eclipsesource.json', 'com.github.acquized.nametags.libs.minimal-json'
+    relocate 'com.zaxxer.hikari', 'com.github.acquized.nametags.libs.hikaricp'
+    relocate 'net.cubespace.Yamler', 'com.github.acquized.nametags.libs.yamler'
+    relocate 'org.slf4j', 'com.github.acquized.nametags.libs.slf4j'
+    relocate 'org.mcstats', 'com.github.acquized.nametags.utils'
+
+    dependencies {
+        include(dependency('com.eclipsesource.minimal-json:minimal-json:0.9.4'))
+        include(dependency('net.cubespace.yamler:Yamler-Bukkit:2.4.0'))
+        include(dependency('org.slf4j::1.7.21'))
+        include(dependency('org.mcstats.bungee:metrics:R8-SNAPSHOT'))
+    }
+}
+
+processResources {
+    expand project.properties
+}
+
+task delombok {
+    description 'Delomboks the entire source code tree'
+    def srcDelomboked = 'build/src-delomboked'
+    def srcJava = 'src'
+
+    inputs.files file( srcJava )
+    outputs.dir file( srcDelomboked )
+
+    doLast {
+        def collection = files( configurations.compile + configurations.testCompile )
+        def sumTree = collection + fileTree( dir: 'bin' )
+
+        ant.taskdef( name: 'delombok', classname: 'lombok.delombok.ant.DelombokTask',
+                classpath: configurations.compile.asPath +
+                        configurations.testCompile.asPath )
+        ant.delombok( from:srcJava, to:srcDelomboked, classpath: sumTree.asPath )
+
+
+        // Replace current src directory with delomboked source
+        copy {
+            from srcDelomboked
+            into srcJava
+        }
+    }
+}

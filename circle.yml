@@ -1,0 +1,21 @@
+machine:
+  java:
+    version: oraclejdk8
+
+dependencies:
+  pre:
+    - wget -O Yamler.jar http://ci.md-5.net/job/Yamler/16/artifact/Yamler-Bukkit/target/Yamler-Bukkit-2.4.0-SNAPSHOT.jar
+    - mvn install:install-file -Dfile=Yamler.jar -DgroupId=net.cubespace.yamler -DartifactId=Yamler-Bukkit -Dversion=2.4.0 -Dpackaging=jar
+  override:
+    - chmod +x gradlew
+    - ./gradlew dependencies
+
+test:
+  override:
+    - ./gradlew clean
+    - ./gradlew shadowJar
+    - ./gradlew test
+  post:
+    - cp build/libs/Nametags-2.0.0-SNAPSHOT-all.jar $CIRCLE_ARTIFACTS/Nametags.jar
+    - mkdir -p $CIRCLE_TEST_REPORTS/junit/
+    - find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
