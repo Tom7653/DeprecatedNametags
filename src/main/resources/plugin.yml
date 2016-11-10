@@ -12,3 +12,4 @@ name: ${project.name}
 version: ${project.version}
 author: ${author}
 main: ${main}
+softdepend: [ProtocolLib, Vault]
